@@ -41,6 +41,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     }
   }
 
+  String formatDateOnly(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('dd/MM/yyyy').format(date);
+    } catch (e) {
+      return dateString;
+    }
+  }
+
   Future<void> _showUpdateStatusDialog() async {
     bool isLoading = false;
 
@@ -81,7 +90,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
                         style: TextButton.styleFrom(
-                          foregroundColor: const Color.fromARGB(255, 255, 0, 0),
+                          foregroundColor: const Color.fromARGB(
+                            255,
+                            188,
+                            11,
+                            11,
+                          ),
                         ),
                         child: const Text('Batal'),
                       ),
@@ -113,7 +127,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE9C8CE),
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            118,
+                            188,
+                            120,
+                          ),
                           foregroundColor: Colors.black,
                         ),
                         child: const Text('Tandai Selesai'),
@@ -133,7 +152,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           idPembeli: _order.idPembeli,
           tanggalPesan: _order.tanggalPesan,
           tanggalLunas: _order.tanggalLunas,
-          tanggalAmbilKirim: DateTime.now().toIso8601String(),
+          tanggalAmbilKirim: DateFormat('yyyy-MM-dd').format(DateTime.now()),
           tambahPoin: _order.tambahPoin,
           poinSebelum: _order.poinSebelum,
           poinSetelah: _order.poinSetelah,
@@ -205,7 +224,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text(
-                    'ReUse Mart',
+                    'ReUseMart',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -217,6 +236,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 _buildInfoRow('Tanggal pesan', formatDate(_order.tanggalPesan)),
                 if (_order.tanggalLunas != null)
                   _buildInfoRow('Lunas pada', formatDate(_order.tanggalLunas!)),
+                if (_order.tanggalAmbilKirim != null)
+                  _buildInfoRow(
+                    'Tanggal Kirim',
+                    formatDateOnly(_order.tanggalAmbilKirim!),
+                  ),
                 _buildInfoRow('Status', _order.status),
 
                 const Divider(height: 24),
@@ -224,7 +248,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 // Customer Info
                 _buildInfoRow('Pembeli', _order.idPembeli),
                 _buildInfoRow('Alamat', _order.alamatPengiriman),
-                _buildInfoRow('Delivery', 'Kurir ${_order.tipeDelivery}'),
+                _buildInfoRow('Delivery', '${_order.tipeDelivery}'),
 
                 const Divider(height: 24),
 
@@ -263,7 +287,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                 const Divider(),
                 _buildInfoRow(
-                  'Total Pembayaran',
+                  'Total',
                   formatCurrency(_order.totalPembayaran),
                   isTotal: true,
                 ),
@@ -283,10 +307,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     children: [
                       Text(
                         'Poin dari pesanan ini: ${_order.tambahPoin}',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      //Text('Poin sebelum: ${_order.poinSebelum}'),
+                      Text(
+                        'Total poin: ${_order.poinSetelah}',
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
-                      Text('Poin sebelum: ${_order.poinSebelum}'),
-                      Text('Total poin: ${_order.poinSetelah}'),
                     ],
                   ),
                 ),

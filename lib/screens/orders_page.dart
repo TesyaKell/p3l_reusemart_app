@@ -126,7 +126,7 @@ class _OrdersPageState extends State<OrdersPage> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE9C8CE),
+                      color: const Color.fromARGB(255, 201, 123, 138),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
@@ -225,12 +225,20 @@ class _OrdersPageState extends State<OrdersPage> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE9C8CE).withOpacity(0.3),
+                      color: const Color.fromARGB(
+                        255,
+                        87,
+                        154,
+                        213,
+                      ).withOpacity(0.3),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
                       'Lihat Detail',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF666666)),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 22, 22, 22),
+                      ),
                     ),
                   ),
                 ],
