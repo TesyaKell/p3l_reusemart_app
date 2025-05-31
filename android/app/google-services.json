@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "883679893472",
+    "firebase_url": "https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "p3l-reusemart",
+    "storage_bucket": "p3l-reusemart.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883679893472:android:9b7025da1ee544e337fd85",
+        "android_client_info": {
+          "package_name": "com.reusemart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBig-jiDiGA8bhpTUKpNeBmhd6XhEhnZVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
