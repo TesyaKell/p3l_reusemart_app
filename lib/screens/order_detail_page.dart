@@ -260,6 +260,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         children: [
                           Text(
                             detail.namaBarang,
+
                             style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
                           Text(
@@ -283,7 +284,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                 if (_order.tukarPoin > 0)
                   _buildInfoRow(
                     'Potongan Poin',
-                    '- ${formatCurrency(_order.tukarPoin)}',
+                    '- ${formatCurrency(_order.tukarPoin * 100)}',
                   ),
                 const Divider(),
                 _buildInfoRow(
