@@ -2,7 +2,7 @@ class Api {
   // Base URL
   static const String baseUrl =
       //ini jangan dihapus, dikomen aja kalau ga dipake
-      'https://a32d-2a09-bac5-3a22-18c8-00-278-82.ngrok-free.app/api';
+      'https://4e91-182-253-183-18.ngrok-free.app/api';
   //static const String baseUrl = 'http://10.0.2.2:8000/api'; // emulator
 
   // Auth endpoints
