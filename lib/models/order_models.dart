@@ -32,7 +32,7 @@ class Order {
   final int totalHargaJualBersih;
   final String? buktiPembayaran;
   final String status;
-  final int komisiPenitip;
+  final dynamic komisiPenitip; // changed from int to dynamic
   final int totalPembayaran;
   final int tukarPoin;
   final List<DetailTransaksi> detailTransaksi;
@@ -53,7 +53,7 @@ class Order {
     required this.totalHargaJualBersih,
     this.buktiPembayaran,
     required this.status,
-    required this.komisiPenitip,
+    required this.komisiPenitip, // changed type
     required this.totalPembayaran,
     required this.tukarPoin,
     required this.detailTransaksi,
@@ -76,7 +76,7 @@ class Order {
       totalHargaJualBersih: json['total_harga_jual_bersih'] ?? 0,
       buktiPembayaran: json['bukti_pembayaran'],
       status: json['status'] ?? '',
-      komisiPenitip: json['komisi_penitip'] ?? 0,
+      komisiPenitip: json['komisi_penitip'], // assign as-is
       totalPembayaran: json['total_pembayaran'] ?? 0,
       tukarPoin: json['tukar_poin'] ?? 0,
       detailTransaksi:
@@ -98,6 +98,7 @@ class DetailTransaksi {
   final int total;
   final int komisiReusmart;
   final int komisiHunter;
+  final dynamic komisiPenitip; // changed from int to dynamic
   final Barang barang;
 
   DetailTransaksi({
@@ -110,6 +111,7 @@ class DetailTransaksi {
     required this.total,
     required this.komisiReusmart,
     required this.komisiHunter,
+    required this.komisiPenitip, // changed type
     required this.barang,
   });
 
@@ -124,6 +126,7 @@ class DetailTransaksi {
       total: json['total'] ?? 0,
       komisiReusmart: json['komisi_reusmart'] ?? 0,
       komisiHunter: json['komisi_hunter'] ?? 0,
+      komisiPenitip: json['komisi_penitip'], // assign as-is
       barang: Barang.fromJson(json['barang'] ?? {}),
     );
   }
@@ -147,7 +150,7 @@ class Barang {
   final String idQcPegawai;
   final String? tanggalAmbil;
   final int beratBarang;
-  final String fotoProduk;
+  final List<String> fotoProduk; // changed from String to List<String>
   final String? batasGaransi;
 
   Barang({
@@ -168,7 +171,7 @@ class Barang {
     required this.idQcPegawai,
     this.tanggalAmbil,
     required this.beratBarang,
-    required this.fotoProduk,
+    required this.fotoProduk, // changed type
     this.batasGaransi,
   });
 
@@ -191,7 +194,9 @@ class Barang {
       idQcPegawai: json['id_qc_pegawai'] ?? '',
       tanggalAmbil: json['tanggal_ambil'],
       beratBarang: json['berat_barang'] ?? 0,
-      fotoProduk: json['foto_produk'] ?? '',
+      fotoProduk:
+          (json['foto_produk'] as List?)?.map((e) => e.toString()).toList() ??
+          [],
       batasGaransi: json['batas_garansi'],
     );
   }
