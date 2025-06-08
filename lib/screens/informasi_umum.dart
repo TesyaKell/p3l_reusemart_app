@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/Barang.dart';
 import '../constants/api.dart';
+import '../screens/beranda.dart';
 
 Future<List<Barang>> fetchBarang() async {
   try {
@@ -37,24 +38,23 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen width for responsive design
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = screenWidth < 400 ? 12.0 : 16.0;
-    final gridCrossAxisCount = screenWidth < 400 ? 2 : 2;
+    final gridCrossAxisCount = screenWidth < 600
+        ? 2
+        : (screenWidth < 900 ? 3 : 4);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tentang Kami'),
-        backgroundColor: Colors.pink[400],
-        elevation: 0,
-      ),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       body: FutureBuilder<List<Barang>>(
         future: futureBarang,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+              child: CircularProgressIndicator(
+                color: Colors.green,
+                strokeWidth: 3,
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
@@ -63,16 +63,16 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
-                    ),
+                    Icon(Icons.error_outline, size: 60, color: Colors.red[400]),
                     const SizedBox(height: 16),
                     Text(
                       'Error: ${snapshot.error}',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
+                      style: TextStyle(
+                        color: Colors.red[600],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
@@ -82,16 +82,29 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[400],
+                        backgroundColor: Colors.green[600],
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      child: const Text('Coba Lagi'),
+                      child: const Text(
+                        'Coba Lagi',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
             );
           } else {
-            // Filter available products
             final List<Barang> products = snapshot.data != null
                 ? snapshot.data!
                       .where((product) => product.status == 'Tersedia')
@@ -104,26 +117,64 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
                   futureBarang = fetchBarang();
                 });
               },
-              color: Colors.green,
+              color: Colors.green[600],
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: EdgeInsets.all(padding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Company headline
-                    _buildCompanyHeadline(context),
+                    // Tombol di atas
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Row(
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const HomePage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Beranda",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const TentangKamiPage(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              "Informasi Umum",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Jarak antara tombol dan konten berikutnya
                     SizedBox(height: padding),
 
-                    // Company description
+                    _buildCompanyHeadline(context),
+                    SizedBox(height: padding),
                     _buildCompanyDescription(),
-                    SizedBox(height: padding * 1.5),
-
-                    // Info cards section
-                    _buildInfoCardsSection(gridCrossAxisCount, padding),
                     SizedBox(height: padding * 2),
-
-                    // Products section
                     _buildProductsSection(
                       products,
                       gridCrossAxisCount,
@@ -143,10 +194,11 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
   Widget _buildCompanyHeadline(BuildContext context) {
     return RichText(
       text: TextSpan(
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: Colors.black87,
           height: 1.3,
+          fontSize: 28,
         ),
         children: const [
           TextSpan(text: 'Produk Pertama '),
@@ -156,7 +208,7 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
           ),
           TextSpan(text: 'Sejak '),
           TextSpan(
-            text: 'Hari Pertama\n',
+            text: 'Hari Pertama NIGGA\n',
             style: TextStyle(color: Color(0xFFD63384)),
           ),
           TextSpan(text: 'ReUseMart Berdiri '),
@@ -170,29 +222,38 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
   }
 
   Widget _buildCompanyDescription() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          'Sejak awal berdirinya pada tahun 2022, ReUseMart telah menghadirkan berbagai barang bekas '
-          'berkualitas sebagai solusi belanja ramah lingkungan. Produk-produk seperti tas second brand ternama, '
-          'sepatu bekas branded, dan peralatan rumah tangga layak pakai menjadi favorit pelanggan sejak hari pertama.',
-          style: TextStyle(fontSize: 16, height: 1.5),
-        ),
-        SizedBox(height: 8),
-        Text(
-          'ReUseMart berkomitmen menciptakan lingkungan berkelanjutan dengan mengedepankan konsep reuse. Setiap '
-          'barang melalui proses kurasi dan pembersihan untuk memastikan kualitas terbaik sebelum dijual kembali.',
-          style: TextStyle(fontSize: 16, height: 1.5),
-        ),
-      ],
-    );
-  }
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-  Widget _buildInfoCardsSection(int crossAxisCount, double padding) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-       
-      ],
+        children: [
+          Text(
+            'Sejak awal berdirinya pada tahun 2022, ReUseMart telah menghadirkan berbagai barang bekas '
+            'berkualitas sebagai solusi belanja ramah lingkungan. Produk-produk seperti tas second brand ternama, '
+            'sepatu bekas branded, dan peralatan rumah tangga layak pakai menjadi favorit pelanggan sejak hari pertama.',
+            style: TextStyle(fontSize: 16, height: 1.6, color: Colors.black87),
+          ),
+          SizedBox(height: 12),
+          Text(
+            'ReUseMart berkomitmen menciptakan lingkungan berkelanjutan dengan mengedepankan konsep reuse. Setiap '
+            'barang melalui proses kurasi dan pembersihan untuk memastikan kualitas terbaik sebelum dijual kembali.',
+            style: TextStyle(fontSize: 16, height: 1.6, color: Colors.black87),
+          ),
+        ],
+      ),
     );
   }
 
@@ -202,12 +263,16 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
     double padding,
   ) {
     if (products.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Text(
             'Tidak ada produk tersedia saat ini',
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16, color: Colors.black54),
             textAlign: TextAlign.center,
           ),
         ),
@@ -219,7 +284,11 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
       children: [
         const Text(
           'Produk Unggulan',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
         SizedBox(height: padding),
         GridView.builder(
@@ -230,11 +299,15 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
             crossAxisCount: crossAxisCount,
             mainAxisSpacing: padding,
             crossAxisSpacing: padding,
-            childAspectRatio: 0.75,
+            childAspectRatio: 0.7,
           ),
           itemBuilder: (context, index) {
             final product = products[index];
-            return _buildProductCard(product, context);
+            return AnimatedScale(
+              scale: 1.0,
+              duration: Duration(milliseconds: 300 + (index * 100)),
+              child: _buildProductCard(product, context),
+            );
           },
         ),
       ],
@@ -249,26 +322,25 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: Colors.grey.withOpacity(0.15),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Product image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
+                top: Radius.circular(16),
               ),
               child: SizedBox(
-                height: 120,
+                height: 140,
                 width: double.infinity,
                 child: Image.network(
                   'http://192.168.1.52:8000/storage/${product.fotoProduk[0]}',
@@ -280,6 +352,7 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
                         child: Icon(
                           Icons.image_not_supported,
                           color: Colors.grey,
+                          size: 50,
                         ),
                       ),
                     );
@@ -294,8 +367,8 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
                               ? loadingProgress.cumulativeBytesLoaded /
                                     loadingProgress.expectedTotalBytes!
                               : null,
-                          color: Colors.green[300],
-                          strokeWidth: 2,
+                          color: Colors.green[400],
+                          strokeWidth: 3,
                         ),
                       ),
                     );
@@ -303,133 +376,38 @@ class _TentangKamiPageState extends State<TentangKamiPage> {
                 ),
               ),
             ),
-
-            // Product details
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.namaBarang,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color: Colors.black87,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     product.deskripsi,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       color: Colors.grey[600],
-                      height: 1.2,
+                      height: 1.3,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 6),
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class InfoCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String subtitle;
-
-  const InfoCard({
-    Key? key,
-    required this.imageUrl,
-    required this.title,
-    required this.subtitle,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image section
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey[200],
-                    child: const Center(
-                      child: Icon(Icons.broken_image, color: Colors.grey),
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    color: Colors.grey[100],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                            : null,
-                        color: Colors.green[300],
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-
-          // Text section
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

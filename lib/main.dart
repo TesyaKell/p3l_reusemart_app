@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'firebase_options.dart';
-import 'screens/home_page.dart';
+import 'screens/home_page.dart' as home_page;
 import 'screens/login_page.dart';
 import 'screens/informasi_umum.dart';
+import 'screens/beranda.dart';
 import 'screens/profil.dart';
 import 'services/notification_service.dart';
 import 'utils/shared_prefs.dart';
@@ -71,9 +72,10 @@ class MyApp extends StatelessWidget {
 
       routes: {
         '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
+        '/home': (context) => const home_page.HomePage(),
         '/profil_kurir': (context) => const ProfilKurir(),
         '/tentang_kami': (context) => const TentangKamiPage(),
+        '/beranda': (context) => ReUseMartApp(),
       },
     );
   }

@@ -15,4 +15,5 @@ class Api {
       '$baseUrl/history-pengiriman-kurir';
 
   static const String barang = 'http://192.168.1.52:8000/barang';
+  static const String rating = 'http://192.168.1.52:8000/rating';
 }
