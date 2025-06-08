@@ -13,4 +13,6 @@ class Api {
   static const String pengirimanKurir = '$baseUrl/pengiriman-kurir';
   static const String historyPengirimanKurir =
       '$baseUrl/history-pengiriman-kurir';
+
+  static const String barang = 'http://192.168.1.52:8000/barang';
 }

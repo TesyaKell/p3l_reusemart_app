@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'firebase_options.dart';
 import 'screens/home_page.dart';
 import 'screens/login_page.dart';
+import 'screens/informasi_umum.dart';
 import 'screens/profil.dart';
 import 'services/notification_service.dart';
 import 'utils/shared_prefs.dart';
@@ -66,11 +67,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: SharedPrefsUtil.isLoggedIn() ? '/home' : '/login',
+      home: const TentangKamiPage(), // langsung ke sini
+
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const HomePage(),
-        '/profil_kurir': (context) => const ProfilKurir(), // Added route
+        '/profil_kurir': (context) => const ProfilKurir(),
+        '/tentang_kami': (context) => const TentangKamiPage(),
       },
     );
   }
