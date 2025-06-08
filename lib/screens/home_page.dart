@@ -20,7 +20,12 @@ class _HomePageState extends State<HomePage> {
 
   List<String> get _titles {
     if (_role == 'kurir') {
-      return ['Home', 'Orders', 'Riwayat Transaksi', 'Profil Kurir'];
+      return [
+        'Home',
+        'Jadwal Pengiriman',
+        'Riwayat Pengiriman',
+        'Profil Kurir',
+      ];
     } else {
       return ['Home', 'Profil'];
     }
