@@ -6,7 +6,7 @@ class Api {
   // //static const String baseUrl = 'http://10.0.2.2:8000/api'; // emulator
 
   static const String baseUrl = 'http://192.168.1.52:8000/api';
-
+  static const String nobase = 'http://192.168.1.52:8000';
   // Auth endpoints
   static const String login = '$baseUrl/login-mobile';
   static const String logout = '$baseUrl/logout-mobile';
@@ -14,7 +14,7 @@ class Api {
   static const String historyPengirimanKurir =
       '$baseUrl/history-pengiriman-kurir';
 
-  static const String barang = 'http://192.168.1.52:8000/barang';
-  static const String rating = 'http://192.168.1.52:8000/rating';
-  static const String transaksi = 'http://192.168.1.52:8000/riwayat-transaksi';
+  static const String barang = '$nobase/barang';
+  static const String rating = '$nobase/rating';
+  static const String riwayatPenitipan = '$nobase/riwayat-penitipan';
 }

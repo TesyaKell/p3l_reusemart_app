@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:p3l_reusemart/screens/orders_page.dart';
+import 'package:p3l_reusemart/screens/penitip/riwayat_penitipan.dart';
 
 import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
@@ -28,23 +29,32 @@ class _HomePageState extends State<HomePage> {
         'Riwayat Pengiriman',
         'Profil Kurir',
       ];
+    }
+    if (_role == 'penitip') {
+      return ['Home', 'Riwayat Transaksi', 'Profil Penitip'];
     } else {
-      return ['Home', 'Riwayat', 'Profil'];
+      return ['Home', 'Riwayat Pembelian', 'Profil Pembeli'];
     }
   }
 
   List<Widget> get _pages {
     if (_role == 'kurir') {
       return [
-        const HomeContent(),
+        const ReUseMartApp(),
         const OrdersPage(),
         const HistoryPage(),
+        const ProfilKurir(),
+      ];
+    } else if (_role == 'penitip') {
+      return [
+        const ReUseMartApp(),
+        const RiwayatTransaksiPage(),
         const ProfilKurir(),
       ];
     } else {
       return [
         const ReUseMartApp(),
-        HistoryTransaksiPage(),
+        const HistoryTransaksiPage(),
         const ProfilKurir(),
       ];
     }
