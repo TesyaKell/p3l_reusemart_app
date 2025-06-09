@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const TentangKamiPage(), // langsung ke sini
+      home: const home_page.HomePage(), // langsung ke sini
 
       routes: {
         '/login': (context) => const LoginPage(),

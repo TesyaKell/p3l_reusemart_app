@@ -3,6 +3,7 @@ import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
 import '../services/auth_service.dart';
 import 'login_page.dart';
+import 'package:intl/intl.dart';
 
 class ProfilKurir extends StatelessWidget {
   const ProfilKurir({super.key});
@@ -13,6 +14,14 @@ class ProfilKurir extends StatelessWidget {
     final role = user?.role ?? '';
     final kodeJabatan = user?.originalData['kode_jabatan'] ?? '-';
     final tanggalLahir = user?.originalData['tanggal_lahir'] ?? '-';
+    final points = user?.points?.toString() ?? '-';
+    final saldo = user?.balance ?? 0;
+
+    final formattedSaldo = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    ).format(saldo);
 
     if (user == null) return const Center(child: CircularProgressIndicator());
 
@@ -69,10 +78,13 @@ class ProfilKurir extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildInfoRow(Icons.email, 'Email', user.email),
+                    _buildInfoRow(Icons.email, 'Emaill', user.email),
                     _buildInfoRow(Icons.phone, 'Telepon', user.phone),
                     if (role == 'hunter' || role == 'kurir')
                       _buildInfoRow(Icons.cake, 'Tanggal Lahir', tanggalLahir),
+                    if (role == 'pembeli' || role == 'penitip')
+                      _buildInfoRow(Icons.star, 'Poin', points),
+                    _buildInfoRow(Icons.money, 'Saldo', formattedSaldo),
                   ],
                 ),
               ),
