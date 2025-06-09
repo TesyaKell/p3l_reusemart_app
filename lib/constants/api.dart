@@ -16,4 +16,5 @@ class Api {
 
   static const String barang = 'http://192.168.1.52:8000/barang';
   static const String rating = 'http://192.168.1.52:8000/rating';
+  static const String transaksi = 'http://192.168.1.52:8000/riwayat-transaksi';
 }

@@ -62,13 +62,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = SharedPrefsUtil.getUser();
     return MaterialApp(
       title: 'ReuseMart',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const home_page.HomePage(), // langsung ke sini
+      home: user != null ? const home_page.HomePage() : const LoginPage(),
 
       routes: {
         '/login': (context) => const LoginPage(),

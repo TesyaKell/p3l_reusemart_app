@@ -5,7 +5,8 @@ import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
 import 'history_page.dart';
 import 'profil.dart';
-import 'beranda.dart';
+import 'pembeli/riwayat_pembelian.dart';
+import '../screens/beranda.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         'Profil Kurir',
       ];
     } else {
-      return ['Home', 'Profil', 'Riwayat'];
+      return ['Home', 'Riwayat', 'Profil'];
     }
   }
 
@@ -41,7 +42,11 @@ class _HomePageState extends State<HomePage> {
         const ProfilKurir(),
       ];
     } else {
-      return [const ReUseMartApp(), const HomeContent(), const ProfilKurir()];
+      return [
+        const ReUseMartApp(),
+        HistoryTransaksiPage(),
+        const ProfilKurir(),
+      ];
     }
   }
 
@@ -84,7 +89,7 @@ class _HomePageState extends State<HomePage> {
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           activeIcon: Icon(Icons.person),
-          label: 'Profilllll',
+          label: 'Profil',
         ),
       ];
     }

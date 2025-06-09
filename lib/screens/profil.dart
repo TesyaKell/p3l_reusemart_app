@@ -84,7 +84,7 @@ class ProfilKurir extends StatelessWidget {
                       _buildInfoRow(Icons.cake, 'Tanggal Lahir', tanggalLahir),
                     if (role == 'pembeli' || role == 'penitip')
                       _buildInfoRow(Icons.star, 'Poin', points),
-                    _buildInfoRow(Icons.money, 'Saldo', formattedSaldo),
+                    _buildInfoRow(Icons.money, 'Saldo', 'Rp $formattedSaldo'),
                   ],
                 ),
               ),
