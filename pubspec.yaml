@@ -29,7 +29,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - lib/assets/konten1.png
-  - lib/assets/konten2.png
-  - lib/assets/konten3.png
-  - lib/assets/header.png
+    - lib/assets/konten1.png
+    - lib/assets/konten2.png
+    - lib/assets/konten3.png
+    - lib/assets/header.png
