@@ -18,6 +18,6 @@ class Api {
       '$baseUrl/history-pengiriman-kurir';
 
   static const String barang = '$nobase/barang';
-  static const String rating = '$nobase/rating';
+  static const String rating = '$nobase/topSeller';
   static const String riwayatPenitipan = '$nobase/riwayat-penitipan';
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:p3l_reusemart/screens/beranda.dart';
 import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
 import '../services/auth_service.dart';
 import 'login_page.dart';
 import 'package:intl/intl.dart';
+import 'home_page.dart';
 
 class ProfilKurir extends StatelessWidget {
   const ProfilKurir({super.key});
@@ -84,11 +86,7 @@ class ProfilKurir extends StatelessWidget {
                       _buildInfoRow(Icons.cake, 'Tanggal Lahir', tanggalLahir),
                     if (role == 'pembeli' || role == 'penitip')
                       _buildInfoRow(Icons.star, 'Poin', points),
-                    _buildInfoRow(
-                      Icons.money,
-                      'Saldoooo',
-                      'Rp $formattedSaldo',
-                    ),
+                    _buildInfoRow(Icons.money, 'Saldo', ' $formattedSaldo'),
                   ],
                 ),
               ),
@@ -163,7 +161,7 @@ class ProfilKurir extends StatelessWidget {
                 Navigator.of(dialogContext).pop();
                 await AuthService.logout();
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  MaterialPageRoute(builder: (context) => const HomePage()),
                   (Route<dynamic> route) => false,
                 );
               },

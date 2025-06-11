@@ -11,6 +11,7 @@ import 'screens/beranda.dart';
 import 'screens/profil.dart';
 import 'services/notification_service.dart';
 import 'utils/shared_prefs.dart';
+import '../screens/home_page.dart';
 
 /// Initialize notification channels early
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -57,26 +58,32 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
     final user = SharedPrefsUtil.getUser();
+    final bool isLoggedIn = user != null;
     return MaterialApp(
       title: 'ReuseMart',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: user != null ? const home_page.HomePage() : const LoginPage(),
-
+      home: user != null ? const home_page.HomePage() : const HomePage(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const home_page.HomePage(),
         '/profil_kurir': (context) => const ProfilKurir(),
         '/tentang_kami': (context) => const TentangKamiPage(),
-        '/beranda': (context) => ReUseMartApp(),
+        '/beranda': (context) =>
+            const ReUseMartApp(), // pastikan ini bukan MaterialApp
       },
     );
   }
