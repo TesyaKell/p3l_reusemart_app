@@ -1,377 +1,807 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../screens/informasi_umum.dart';
+import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
 import '../models/PenitipRating.dart';
-import '../constants/api.dart';
+import '../screens/informasi_umum.dart';
 
-void main() {
-  runApp(const ReUseMartApp());
-}
-
-class ReUseMartApp extends StatelessWidget {
-  const ReUseMartApp({super.key});
+class ReUseMartApp extends StatefulWidget {
+  const ReUseMartApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'ReUseMart',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: GoogleFonts.poppins().fontFamily,
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: const HomePage(),
-    );
-  }
+  State<ReUseMartApp> createState() => _ReUseMartAppState();
 }
 
-class PenitipRating {
-  final String name;
-  final double averageRating;
-  final int totalRatings;
+class _ReUseMartAppState extends State<ReUseMartApp>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  int _selectedTabIndex = 1;
+  User? _user;
+  String? _role;
 
-  PenitipRating({
-    required this.name,
-    required this.averageRating,
-    required this.totalRatings,
-  });
+  Future<PenitipRating?> fetchTopSeller() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://192.168.1.20:8000/topSeller'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
 
-  factory PenitipRating.fromJson(Map<String, dynamic> json) {
-    return PenitipRating(
-      name: json['nama_penitip'] ?? '',
-      averageRating:
-          (json['average_rating'] is int
-              ? json['average_rating'].toDouble()
-              : json['average_rating']) ??
-          0.0,
-      totalRatings: json['total_ratings'] ?? 0,
-    );
-  }
-}
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-Future<List<PenitipRating>> fetchPenitipRating() async {
-  try {
-    final response = await http
-        .get(Uri.parse(Api.rating))
-        .timeout(const Duration(seconds: 10));
-    print('HTTP Status: ${response.statusCode}');
-    print('Raw Response: ${response.body}');
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
 
-    if (response.statusCode == 200) {
-      final jsonResponse = json.decode(response.body) as Map<String, dynamic>;
-      print('Parsed JSON: $jsonResponse');
+        // Handle different response structures
+        if (jsonResponse is Map<String, dynamic>) {
+          if (jsonResponse['success'] == true &&
+              jsonResponse['top_seller'] != null) {
+            return PenitipRating.fromJson(jsonResponse['top_seller']);
+          } else if (jsonResponse['data'] != null) {
+            return PenitipRating.fromJson(jsonResponse['data']);
+          } else if (jsonResponse.containsKey('name')) {
+            // Direct seller data
+            return PenitipRating.fromJson(jsonResponse);
+          }
+        }
 
-      if (!jsonResponse['success']) {
-        throw Exception(jsonResponse['message'] ?? 'Failed to load penitips');
+        return null;
+      } else {
+        print('Failed to load top seller: ${response.statusCode}');
+        return null;
       }
-
-      final List<dynamic> data = jsonResponse['data'] ?? [];
-      print('Data List: $data');
-
-      return data
-          .whereType<Map<String, dynamic>>()
-          .map((item) => PenitipRating.fromJson(item))
-          .toList();
-    } else {
-      throw Exception('Failed to load penitip rating: ${response.statusCode}');
+    } catch (e) {
+      print('Error fetching top seller: $e');
+      return null;
     }
-  } catch (e) {
-    print('Fetch Error: $e');
-    throw Exception('Network error: $e');
   }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final PageController _imageController = PageController();
-  final PageController _penitipController = PageController();
-
-  Timer? _imageTimer;
-  Timer? _penitipTimer;
-
-  final List<String> highlightImages = [
-    'lib/assets/konten2.png',
-    'lib/assets/konten1.png',
-    'lib/assets/konten3.png',
-  ];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _imageTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-        if (_imageController.hasClients) {
-          int nextPage = (_imageController.page?.toInt() ?? 0) + 1;
-          if (nextPage >= highlightImages.length) {
-            nextPage = 0;
-          }
-          _imageController.animateToPage(
-            nextPage,
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.easeIn,
-          );
-        }
-      });
+    _loadUserData();
 
-      _penitipTimer = Timer.periodic(const Duration(seconds: 4), (_) {
-        if (_penitipController.hasClients) {
-          int nextPage = (_penitipController.page?.toInt() ?? 0) + 1;
-          if (nextPage >= 7) {
-            // Asumsi maksimal 7 penitip dari API
-            nextPage = 0;
-          }
-          _penitipController.animateToPage(
-            nextPage,
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.easeIn,
-          );
-        }
-      });
-    });
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _animationController.forward();
   }
 
   @override
   void dispose() {
-    _imageTimer?.cancel();
-    _penitipTimer?.cancel();
-    _imageController.dispose();
-    _penitipController.dispose();
+    _animationController.dispose();
     super.dispose();
+  }
+
+  void _loadUserData() {
+    setState(() {
+      _user = SharedPrefsUtil.getUser();
+      _role = SharedPrefsUtil.getRole();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = SharedPrefsUtil.getUser();
-    final bool isLoggedIn = user != null;
-    final String? role = user?.role;
+    final bool isLoggedIn = SharedPrefsUtil.getUser() != null;
+    final role = SharedPrefsUtil.getRole();
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {}); // Refresh UI
-                    },
-                    child: const Text(
-                      "Beranda",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TentangKamiPage(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Informasi Umum",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+      backgroundColor: const Color(0xFFF8F9FA),
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {
+              // Refresh data if needed
+            });
+          },
+          color: const Color(0xFFE91E63),
+          child: CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _buildWelcomeSection(),
+                    _buildTopSellerSection(),
+                    _buildNavigationTabs(),
+                    _buildInfoSection(),
+
+                    const SizedBox(height: 30), // Bottom spacing
+                  ],
+                ),
               ),
-            ),
-            Image.asset('lib/assets/header.png'),
-            const SizedBox(height: 16),
-            if (isLoggedIn)
-              Card(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: !isLoggedIn
+          ? Container(
+              margin: const EdgeInsets.only(bottom: 40),
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                label: const Text(
+                  'Masuk Sekarang',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                icon: const Icon(Icons.login, color: Colors.white),
+                backgroundColor: Colors.pinkAccent,
+                elevation: 6,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  const Text(
-                    "Cari Semua di ",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "ReUseMart",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      foreground: Paint()
-                        ..shader = LinearGradient(
-                          colors: [Colors.pink, Colors.black],
-                        ).createShader(const Rect.fromLTWH(0, 0, 100, 20)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 200,
-              child: PageView.builder(
-                controller: _imageController,
-                itemCount: highlightImages.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: AssetImage(highlightImages[index]),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 10),
-            SmoothPageIndicator(
-              controller: _imageController,
-              count: highlightImages.length,
-              effect: const ExpandingDotsEffect(
-                dotHeight: 8,
-                dotWidth: 8,
-                activeDotColor: Colors.pink,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: const [
-                  Text(
-                    "Top Rated Penitip",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 180,
-              child: FutureBuilder<List<PenitipRating>>(
-                future: fetchPenitipRating(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(fontSize: 16, color: Colors.red),
-                      ),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No top penitips available',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    );
-                  }
+            )
+          : null,
+    );
+  }
 
-                  final penitips = snapshot.data!;
-                  return PageView.builder(
-                    controller: _penitipController,
-                    itemCount: penitips.length,
-                    itemBuilder: (context, index) {
-                      final penitip = penitips[index];
-                      return Container(
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.symmetric(horizontal: 12),
+  Widget _buildNavigationTabs() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          _buildTabButton('Beranda', Icons.home_outlined, 1, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ReUseMartApp()),
+            );
+          }),
+          _buildTabButton('Informasi Umum', Icons.info_outline, 0, () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const TentangKamiPage()),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton(
+    String title,
+    IconData icon,
+    int index,
+    VoidCallback onTap,
+  ) {
+    final isSelected = _selectedTabIndex == index;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedTabIndex = index;
+          });
+          onTap();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.pink : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : Colors.grey[600],
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.grey[600],
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSliverAppBar() {
+    return SliverAppBar(
+      expandedHeight: 100,
+      floating: false,
+      pinned: true,
+      backgroundColor: const Color(0xFFE91E63),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [const Color(0xFFE91E63), const Color(0xFFAD1457)],
+            ),
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.recycling,
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade300,
-                              blurRadius: 6,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                          size: 24,
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              penitip.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(5, (i) {
-                                return Icon(
-                                  i < penitip.averageRating.round()
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  color: Colors.amber,
-                                  size: 20,
-                                );
-                              }),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              "${penitip.averageRating.toStringAsFixed(1)} (${penitip.totalRatings} rating${penitip.totalRatings == 1 ? '' : 's'})",
-                            ),
-                            const SizedBox(height: 6),
-                            const Chip(
-                              label: Text(
-                                "Top Seller",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.green,
-                            ),
-                          ],
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text(
+                          'ReUseMart',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      );
-                    },
-                  );
-                },
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.notifications_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            FutureBuilder<List<PenitipRating>>(
-              future: fetchPenitipRating(),
-              builder: (context, snapshot) {
-                return SmoothPageIndicator(
-                  controller: _penitipController,
-                  count: snapshot.hasData ? snapshot.data!.length : 0,
-                  effect: const WormEffect(dotHeight: 8, dotWidth: 8),
-                );
-              },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection() {
+    final bool isLoggedIn = SharedPrefsUtil.getUser() != null;
+
+    if (!isLoggedIn) {
+      return Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.pink[50]!, Colors.purple[50]!],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
-            const SizedBox(height: 32),
           ],
         ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.person_outline,
+              size: 50,
+              color: Color(0xFFE91E63),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Selamat Datang di ReUseMart',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Silakan masuk untuk menikmati semua fitur aplikasi kami.',
+              style: TextStyle(fontSize: 14, color: Colors.black54),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.pink[50]!, Colors.purple[50]!],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: const Color(0xFFE91E63),
+                child: Text(
+                  _user?.name.substring(0, 1).toUpperCase() ?? 'U',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Selamat datang, ${_user?.name ?? 'User'}!',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE91E63),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _role?.toUpperCase() ?? 'USER',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.account_balance_wallet,
+                  color: Color(0xFFE91E63),
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Saldo: Rp ${_user?.balance ?? 0}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(Icons.stars, color: Colors.orange, size: 20),
+                const SizedBox(width: 4),
+                Text(
+                  '${_user?.points ?? 0} Poin',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopSellerSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Penitip Terbaik Bulan Ini',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 12),
+          FutureBuilder<PenitipRating?>(
+            future: fetchTopSeller(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFFE91E63),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              if (snapshot.hasError) {
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.red.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.error_outline, color: Colors.red.shade600),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Gagal memuat data penitip terbaik',
+                          style: TextStyle(
+                            color: Colors.red.shade700,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              if (!snapshot.hasData || snapshot.data == null) {
+                return Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 1,
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.emoji_events_outlined,
+                        size: 48,
+                        color: Colors.grey.shade400,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Belum ada penitip terbaik bulan ini',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final penitip = snapshot.data!;
+              return Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.amber.shade50, Colors.orange.shade50],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.orange.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Trophy and Avatar Section
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade100,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.amber.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.emoji_events,
+                            color: Colors.amber.shade700,
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundColor: const Color(0xFFE91E63),
+                          child: Text(
+                            penitip.name.substring(0, 1).toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 16),
+                    // Info Section
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Penitip Terbaik',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.amber.shade700,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            penitip.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Rating Stars
+                          Row(
+                            children: [
+                              ...List.generate(5, (index) {
+                                return Icon(
+                                  index < penitip.averageRating.round()
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.amber.shade600,
+                                  size: 18,
+                                );
+                              }),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${penitip.averageRating.toStringAsFixed(1)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.amber.shade700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${penitip.totalRatings} penilaian',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade600,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        '#1',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.blue.shade50, Colors.indigo.shade50],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  color: Colors.blue.shade700,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Tentang ReUseMart',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Platform marketplace untuk barang bekas berkualitas. Kami membantu Anda menemukan barang second yang masih layak pakai dengan harga terjangkau.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade700,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(Icons.verified, color: Colors.pink.shade600, size: 16),
+              const SizedBox(width: 8),
+              Text(
+                'Barang terverifikasi kualitas',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.security, color: Colors.pink.shade600, size: 16),
+              const SizedBox(width: 8),
+              Text(
+                'Transaksi aman dan terpercaya',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
