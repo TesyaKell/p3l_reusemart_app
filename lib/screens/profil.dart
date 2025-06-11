@@ -27,90 +27,134 @@ class ProfilKurir extends StatelessWidget {
 
     if (user == null) return const Center(child: CircularProgressIndicator());
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
+    return Scaffold(
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            // FOTO & NAMA
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: const Color.fromARGB(255, 188, 99, 142),
-              child: Text(
-                user.name[0].toUpperCase(),
-                style: const TextStyle(fontSize: 40, color: Colors.white),
+            // HEADER
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFE91E63), Color.fromARGB(255, 169, 14, 79)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              user.name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            // Role dan kode jabatan hanya untuk hunter/kurir
-            if (role == 'hunter' || role == 'kurir')
-              Text(
-                '$kodeJabatan | ${role.toUpperCase()}',
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
-              )
-            else
-              Text(
-                role.toUpperCase(),
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            const SizedBox(height: 24),
-
-            // KARTU INFO
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white,
+                    child: CircleAvatar(
+                      radius: 45,
+                      backgroundColor: const Color.fromARGB(255, 117, 46, 81),
                       child: Text(
-                        'Informasi Akun',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        user.name[0].toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    _buildInfoRow(Icons.email, 'Emaill', user.email),
-                    _buildInfoRow(Icons.phone, 'Telepon', user.phone),
-                    if (role == 'hunter' || role == 'kurir')
-                      _buildInfoRow(Icons.cake, 'Tanggal Lahir', tanggalLahir),
-                    if (role == 'pembeli' || role == 'penitip')
-                      _buildInfoRow(Icons.star, 'Poin', points),
-                    _buildInfoRow(Icons.money, 'Saldo', ' $formattedSaldo'),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    (role == 'hunter' || role == 'kurir')
+                        ? '$kodeJabatan | ${role.toUpperCase()}'
+                        : role.toUpperCase(),
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 24),
 
-            // TOMBOL LOGOUT
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _confirmLogout(context),
-                icon: const Icon(Icons.logout),
-                label: const Text('Logout'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 188, 99, 142),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: const TextStyle(fontSize: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 20),
+
+            // KARTU INFO
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 16,
+                  ),
+                  child: Column(
+                    children: [
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Informasi Akun',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildInfoRow(Icons.email, 'Email', user.email),
+                      _buildInfoRow(Icons.phone, 'Telepon', user.phone),
+                      if (role == 'hunter' || role == 'kurir')
+                        _buildInfoRow(
+                          Icons.cake,
+                          'Tanggal Lahir',
+                          tanggalLahir,
+                        ),
+                      if (role == 'pembeli' || role == 'penitip')
+                        _buildInfoRow(Icons.star, 'Poin', points),
+                      _buildInfoRow(
+                        Icons.account_balance_wallet,
+                        'Saldo',
+                        formattedSaldo,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
+
+            const SizedBox(height: 30),
+
+            // LOGOUT BUTTON
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _confirmLogout(context),
+                  icon: const Icon(Icons.logout),
+                  label: const Text('Logout'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 202, 46, 98),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    textStyle: const TextStyle(fontSize: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -118,28 +162,13 @@ class ProfilKurir extends StatelessWidget {
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color.fromARGB(255, 204, 100, 135)),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: const TextStyle(color: Colors.grey)),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(icon, color: const Color(0xFFBC638E)),
+      title: Text(label, style: const TextStyle(color: Colors.grey)),
+      subtitle: Text(
+        value,
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
       ),
     );
   }
