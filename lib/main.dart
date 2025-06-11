@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:p3l_reusemart/screens/home_umum.dart';
 
 import 'firebase_options.dart';
 import 'screens/home_page.dart';
@@ -66,8 +67,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: SharedPrefsUtil.isLoggedIn() ? '/home' : '/login',
+      initialRoute: 
+      // SharedPrefsUtil.isLoggedIn() ? 
+      '/home' 
+      // : '/login'
+      ,
       routes: {
+        // '/umum': (context) => const HomeUmumPage(),
         '/login': (context) => const LoginPage(),
         '/home': (context) => const HomePage(),
         '/profil_kurir': (context) => const ProfilKurir(), // Added route

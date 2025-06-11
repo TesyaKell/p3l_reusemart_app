@@ -147,7 +147,7 @@ class Barang {
   final String idQcPegawai;
   final String? tanggalAmbil;
   final int beratBarang;
-  final String fotoProduk;
+  final List<String> fotoProduk;
   final String? batasGaransi;
 
   Barang({
@@ -191,7 +191,9 @@ class Barang {
       idQcPegawai: json['id_qc_pegawai'] ?? '',
       tanggalAmbil: json['tanggal_ambil'],
       beratBarang: json['berat_barang'] ?? 0,
-      fotoProduk: json['foto_produk'] ?? '',
+      // fotoProduk: json['foto_produk'] ?? '',
+      fotoProduk: (json['foto_produk'] as List<dynamic>?) 
+        ?.map((e) => e.toString()).toList() ?? [],
       batasGaransi: json['batas_garansi'],
     );
   }
