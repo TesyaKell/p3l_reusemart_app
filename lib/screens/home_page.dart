@@ -26,9 +26,6 @@ class _HomePageState extends State<HomePage> {
   User? _user;
   String? _role;
   int _selectedIndex = 0;
-  
-  
-
 
   List<String> get _titles {
     if (_role == 'kurir') {
@@ -231,10 +228,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[_selectedIndex]),
-        backgroundColor: const Color(0xFFE9C8CE),
-      ),
+      // if(_selectedIndex == 1){
+        appBar: AppBar(
+          title: Text(_titles[_selectedIndex]),
+          backgroundColor: const Color(0xFFE9C8CE),
+        ),
+      // }
       body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -343,46 +342,46 @@ class _HomeContentState extends State<HomeContent> {
 
                 return Column(
                   children: [
-                    if (user != null) ...[
-                      Card(
-                        elevation: 4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Welcome, ${user.name}!',
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Role: ${role?.toUpperCase() ?? "User"}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              if(role=='penitip' || role=='pembeli')...[
-                                _buildInfoItem('Points', '${user.points}'),
-                                _buildInfoItem('Balance', 'Rp ${user.balance}'),
-                                if (role == 'penitip')
-                                  _buildInfoItem('Top Seller', user.isTopSeller ? 'Yes' : 'No'),
-                              ]
-                            ],
-                          ),
-                        ),
-                      ),
+                    // if (user != null) ...[
+                    //   Card(
+                    //     elevation: 4,
+                    //     child: Padding(
+                    //       padding: const EdgeInsets.all(16.0),
+                    //       child: Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           Text(
+                    //             'Welcome, ${user.name}!',
+                    //             style: const TextStyle(
+                    //               fontSize: 24,
+                    //               fontWeight: FontWeight.bold,
+                    //             ),
+                    //           ),
+                    //           const SizedBox(height: 8),
+                    //           Text(
+                    //             'Role: ${role?.toUpperCase() ?? "User"}',
+                    //             style: TextStyle(
+                    //               fontSize: 16,
+                    //               color: Theme.of(context).colorScheme.primary,
+                    //               fontWeight: FontWeight.w500,
+                    //             ),
+                    //           ),
+                    //           if(role=='penitip' || role=='pembeli')...[
+                    //             _buildInfoItem('Points', '${user.points}'),
+                    //             _buildInfoItem('Balance', 'Rp ${user.balance}'),
+                    //             if (role == 'penitip')
+                    //               _buildInfoItem('Top Seller', user.isTopSeller ? 'Yes' : 'No'),
+                    //           ]
+                    //         ],
+                    //       ),
+                    //     ),
+                    //   ),
                       
-                      const SizedBox(height: 8),
-                      // _buildInfoItem('Email', user.email),
-                      // _buildInfoItem('Phone', user.phone),
+                    //   const SizedBox(height: 8),
+                    //   // _buildInfoItem('Email', user.email),
+                    //   // _buildInfoItem('Phone', user.phone),
                       
-                    ],
+                    // ],
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       child: TextField(

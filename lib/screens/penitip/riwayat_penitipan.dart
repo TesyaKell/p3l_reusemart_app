@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:p3l_reusemart/constants/api.dart';
 import '../../models/Barang.dart';
 import '../../utils/shared_prefs.dart';
 import 'detail_barang.dart';
@@ -16,7 +17,7 @@ class RiwayatTransaksiPage extends StatefulWidget {
 class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
   late Future<List<Barang>> _futureTransaksi;
   bool _isGridView = true;
-  final String baseUrl = 'http://192.168.1.20:8000';
+  final String baseUrl = '${Api.baseUrl}';
 
   @override
   void initState() {
@@ -27,7 +28,7 @@ class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
   Future<List<Barang>> fetchTransaksi() async {
     final token = await SharedPrefsUtil.getToken();
     final response = await http.get(
-      Uri.parse('http://192.168.1.20:8000/riwayat-penitipan'),
+      Uri.parse('${Api.baseUrl}/riwayat-penitipan'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
