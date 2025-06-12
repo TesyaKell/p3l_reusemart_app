@@ -35,6 +35,18 @@ class _HomePageState extends State<HomePage> {
         'Riwayat Pengiriman',
         'Profil Kurir',
       ];
+    } else if(_role == 'hunter'){
+      return [
+        'Home', 
+        'Riwayat Komisi', 
+        'Profil',
+        ];
+    }else if(_role == 'pembeli'){
+      return [
+        'Home', 
+        'Merchandise', 
+        'Profil',
+        ];
     } else {
       return ['Home', 'Profil'];
     }
@@ -100,6 +112,24 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.history),
           activeIcon: Icon(Icons.history_edu),
           label: 'Riwayat Komisi',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
+          label: 'Profil',
+        ),
+      ];
+    } else if(_role=='pembeli') {
+      return const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          activeIcon: Icon(Icons.person),
+          label: 'Merchandise',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
@@ -301,22 +331,21 @@ class _HomeContentState extends State<HomeContent> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              if(role=='penitip' || role=='pembeli')...[
+                                _buildInfoItem('Points', '${user.points}'),
+                                _buildInfoItem('Balance', 'Rp ${user.balance}'),
+                                if (role == 'penitip')
+                                  _buildInfoItem('Top Seller', user.isTopSeller ? 'Yes' : 'No'),
+                              ]
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Account Information',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+                      
                       const SizedBox(height: 8),
-                      _buildInfoItem('Email', user.email),
-                      _buildInfoItem('Phone', user.phone),
-                      _buildInfoItem('Points', '${user.points}'),
-                      _buildInfoItem('Balance', 'Rp ${user.balance}'),
-                      if (role == 'penitip')
-                        _buildInfoItem('Top Seller', user.isTopSeller ? 'Yes' : 'No'),
+                      // _buildInfoItem('Email', user.email),
+                      // _buildInfoItem('Phone', user.phone),
+                      
                     ],
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -427,7 +456,7 @@ class _HomeContentState extends State<HomeContent> {
 
   Widget _buildInfoItem(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

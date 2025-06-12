@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import '../constants/api.dart';
 import '../utils/shared_prefs.dart';
 
@@ -14,7 +15,7 @@ class HistoryKomisiPage extends StatefulWidget {
 class _HistoryKomisiPageState extends State<HistoryKomisiPage> {
   int totalKomisi = 0;
   List<dynamic> komisiList = [];
-
+  final currencyFormatter = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
   @override
   void initState() {
     super.initState();
@@ -23,8 +24,8 @@ class _HistoryKomisiPageState extends State<HistoryKomisiPage> {
 
   Future<void> fetchKomisi() async {
     final user = SharedPrefsUtil.getUser();
-    final id = user?.id;
-
+    final id = user?.originalData['id_pegawai'];
+    print('id: ${id}');
     if (id == null) return;
 
     final res = await http.get(Uri.parse('${Api.historyKomisi}/$id'));
@@ -41,19 +42,18 @@ class _HistoryKomisiPageState extends State<HistoryKomisiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Riwayat Komisi'),
-        backgroundColor: const Color(0xFFE9C8CE),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: komisiList.isEmpty
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: 
+            CircularProgressIndicator()
+            // const Text('ga ada komisi')
+            )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Total Komisi: Rp $totalKomisi',
+                    'Total Komisi: ${currencyFormatter.format(totalKomisi)}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class _HistoryKomisiPageState extends State<HistoryKomisiPage> {
                         return Card(
                           child: ListTile(
                             leading: const Icon(Icons.monetization_on),
-                            title: Text('Rp ${komisi['komisi_hunter']}'),
+                            title: Text('${currencyFormatter.format(komisi['komisi_hunter'])}'),
                             subtitle: Text('Barang: ${komisi['nama_barang']}'),
                             trailing: Text(komisi['tanggal']),
                           ),

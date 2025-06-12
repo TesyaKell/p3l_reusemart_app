@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:p3l_reusemart/screens/home_page.dart';
 import '../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -180,7 +181,11 @@ class _LoginPageState extends State<LoginPage> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: (){
-                              Navigator.pop(context);
+                              Navigator.push(context, 
+                                MaterialPageRoute(
+                                  builder: (context) => HomeContent(),
+                                ),
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color.fromARGB(255, 224, 182, 203),

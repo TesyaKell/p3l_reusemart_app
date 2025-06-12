@@ -14,78 +14,37 @@ class MerchandisePage extends StatefulWidget {
 
 class _MerchandisePageState extends State<MerchandisePage> {
   List<dynamic> merchandises = [];
-  final user = SharedPrefsUtil.getUser();
+  User? user;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    loadMerchandise();
+    loadUserAndMerchandise();
   }
 
-  Future<void> loadMerchandise() async {
-    
+
+  Future<void> loadUserAndMerchandise() async {
+    final loadedUser = SharedPrefsUtil.getUser();
     final response = await http.get(Uri.parse(Api.merchandise));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       setState(() {
-        merchandises = data['merchandise'];
+        user = loadedUser;
+        merchandises = data;
         _isLoading = false;
       });
+      // final List<dynamic> data1 = jsonDecode(response.body);
+      // print('Decoded Data: $data1'); // tampilkan data setelah decoding
+      
+      // for (var item in data1) {
+      //   print('Nama Merchandise: ${item['nama']}');
+      // }
     } else {
-      // Handle error
       setState(() {
         _isLoading = false;
       });
     }
-  }
-
-  Future<void> claimMerchandise(String id, int requiredPoints) async {
-    if (user!.points! > requiredPoints ) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Poin tidak cukup untuk klaim.")),
-      );
-      return;
-    }
-
-   final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Konfirmasi Penukaran"),
-      content: Text("Apakah Anda yakin ingin menukar ${requiredPoints} poin untuk merchandise ini?"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text("Batal"),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: const Text("Ya, Klaim"),
-        ),
-      ],
-    ),
-  );
-
-  if (confirmed != true) return;
-
-  final response = await http.post(
-    Uri.parse('${Api.baseUrl}claim-merchandise'),
-    body: {
-      'id_pembeli': user!.id,
-      'id_merchandise': id,
-    },
-  );
-
-  if (response.statusCode == 200) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Klaim berhasil, silakan ambil di CS!")),
-    );
-    await loadMerchandise(); // Refresh list
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Gagal klaim merchandise.")),
-    );
-  }
   }
 
   @override
@@ -93,7 +52,7 @@ class _MerchandisePageState extends State<MerchandisePage> {
     if (_isLoading) return const Center(child: CircularProgressIndicator());
     
     return RefreshIndicator(
-      onRefresh: loadMerchandise,
+      onRefresh: loadUserAndMerchandise,
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : merchandises.isEmpty
@@ -106,14 +65,24 @@ class _MerchandisePageState extends State<MerchandisePage> {
                   margin: const EdgeInsets.all(10),
                   elevation: 4,
                   child: ListTile(
-                    leading: const Icon(Icons.card_giftcard),
-                    title: Text(item['nama_merchandise']),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        '${Api.baseUrlnon}/storage/${item['gambar']}',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, _, __) => const Icon(Icons.broken_image),
+                      ),
+                    ),
+
+                    title: Text(item['nama']),
                     subtitle: Text("Poin: ${item['poin']}"),
                     trailing: ElevatedButton(
-                      onPressed: () => claimMerchandise(item['id_merchandise'], item['poin']),
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Color(0xFFE9C8CE),
+                        foregroundColor: Colors.black,
                       ),
                       child: const Text("Tukar"),
                     ),
