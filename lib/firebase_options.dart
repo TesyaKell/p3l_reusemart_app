@@ -46,7 +46,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '883679893472',
     projectId: 'p3l-reusemart',
     authDomain: 'p3l-reusemart.firebaseapp.com',
-    databaseURL: 'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'p3l-reusemart.firebasestorage.app',
     measurementId: 'G-QRXNG32E96',
   );
@@ -56,7 +57,8 @@ class DefaultFirebaseOptions {
     appId: '1:883679893472:android:9b7025da1ee544e337fd85',
     messagingSenderId: '883679893472',
     projectId: 'p3l-reusemart',
-    databaseURL: 'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'p3l-reusemart.firebasestorage.app',
   );
 
@@ -65,7 +67,8 @@ class DefaultFirebaseOptions {
     appId: '1:883679893472:ios:d205eebe8949888d37fd85',
     messagingSenderId: '883679893472',
     projectId: 'p3l-reusemart',
-    databaseURL: 'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'p3l-reusemart.firebasestorage.app',
     iosBundleId: 'com.example.p3lReusemart',
   );
@@ -75,7 +78,8 @@ class DefaultFirebaseOptions {
     appId: '1:883679893472:ios:d205eebe8949888d37fd85',
     messagingSenderId: '883679893472',
     projectId: 'p3l-reusemart',
-    databaseURL: 'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'p3l-reusemart.firebasestorage.app',
     iosBundleId: 'com.example.p3lReusemart',
   );
@@ -86,7 +90,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '883679893472',
     projectId: 'p3l-reusemart',
     authDomain: 'p3l-reusemart.firebaseapp.com',
-    databaseURL: 'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://p3l-reusemart-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'p3l-reusemart.firebasestorage.app',
     measurementId: 'G-N5CQ3RS7S0',
   );

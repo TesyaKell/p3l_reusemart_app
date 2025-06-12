@@ -24,7 +24,7 @@ class _ReUseMartAppState extends State<ReUseMartApp>
   Future<PenitipRating?> fetchTopSeller() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.1.20:8000/topSeller'),
+        Uri.parse('http://10.32.254.113:8000/topSeller'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

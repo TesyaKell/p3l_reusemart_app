@@ -37,7 +37,7 @@ class _HistoryTransaksiPageState extends State<HistoryTransaksiPage> {
     if (year != null) queryParams['year'] = year.toString();
 
     final uri = Uri.parse(
-      'http://192.168.1.20:8000/riwayat-transaksi',
+      'http://10.32.254.113:8000/riwayat-transaksi',
     ).replace(queryParameters: queryParams);
 
     final response = await http.get(
