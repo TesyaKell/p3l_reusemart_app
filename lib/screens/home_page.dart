@@ -4,6 +4,7 @@ import 'package:p3l_reusemart/models/order_models.dart';
 import 'package:p3l_reusemart/screens/history_komisi_page.dart';
 import 'package:p3l_reusemart/screens/merchandise.dart';
 import 'package:p3l_reusemart/screens/orders_page.dart';
+import 'package:p3l_reusemart/screens/penitip/riwayat_penitipan.dart';
 import 'package:p3l_reusemart/services/barang_service.dart';
 import 'package:p3l_reusemart/utils/garansi_utils.dart';
 
@@ -11,6 +12,8 @@ import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
 import 'history_page.dart';
 import 'profil.dart';
+import 'pembeli/riwayat_pembelian.dart';
+import '../screens/beranda.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,6 +38,10 @@ class _HomePageState extends State<HomePage> {
         'Riwayat Pengiriman',
         'Profil Kurir',
       ];
+    }
+    if (_role == 'penitip') {
+      return ['Home', 'Riwayat Transaksi', 'Profil Penitip'];
+
     } else if(_role == 'hunter'){
       return [
         'Home', 
@@ -48,18 +55,23 @@ class _HomePageState extends State<HomePage> {
         'Profil',
         ];
     } else {
-      return ['Home', 'Profil'];
+      return ['Home', 'Riwayat Pembelian', 'Profil Pembeli'];
     }
   }
 
   List<Widget> get _pages {
     if (_role == 'kurir') {
       return [
-        const HomeContent(),
+        const ReUseMartApp(),
         const OrdersPage(),
         const HistoryPage(),
         const ProfilKurir(),
       ];
+    } else if (_role == 'penitip') {
+      return [
+        const ReUseMartApp(),
+        const RiwayatTransaksiPage(),
+        const ProfilKurir(),
     } else if(_role == 'hunter') {
       return [
         const HomeContent(), 
@@ -73,7 +85,11 @@ class _HomePageState extends State<HomePage> {
         const ProfilKurir()
       ];
     } else {
-      return [const HomeContent(), const ProfilKurir()];
+      return [
+        const ReUseMartApp(),
+        const HistoryTransaksiPage(),
+        const ProfilKurir(),
+      ];
     }
   }
 
@@ -143,6 +159,11 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.home_outlined),
           activeIcon: Icon(Icons.home),
           label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.history),
+          activeIcon: Icon(Icons.history),
+          label: 'Riwayat',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
