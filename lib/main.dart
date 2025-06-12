@@ -77,15 +77,14 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: user != null ? const home_page.HomePage() : const HomePage(),
+      home: user != null ? const home_page.HomePage() : const ReUseMartApp(),
       routes: {
         // '/umum': (context) => const HomeUmumPage(),
         '/login': (context) => const LoginPage(),
         '/home': (context) => const home_page.HomePage(),
         '/profil_kurir': (context) => const ProfilKurir(),
         '/tentang_kami': (context) => const TentangKamiPage(),
-        '/beranda': (context) =>
-            const ReUseMartApp(), // pastikan ini bukan MaterialApp
+        '/beranda': (context) => const ReUseMartApp(), // pastikan ini bukan MaterialApp
       },
     );
   }

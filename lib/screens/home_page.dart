@@ -45,17 +45,19 @@ class _HomePageState extends State<HomePage> {
     } else if(_role == 'hunter'){
       return [
         'Home', 
+        'Barang Tersedia',
         'Riwayat Komisi', 
         'Profil',
         ];
     }else if(_role == 'pembeli'){
       return [
         'Home', 
+        'Barang Tersedia', 
         'Merchandise', 
         'Profil',
         ];
     } else {
-      return ['Home', 'Riwayat Pembelian', 'Profil Pembeli'];
+      return ['Home', 'Riwayat Pembelian', 'Profil'];
     }
   }
 
@@ -72,14 +74,17 @@ class _HomePageState extends State<HomePage> {
         const ReUseMartApp(),
         const RiwayatTransaksiPage(),
         const ProfilKurir(),
+      ];
     } else if(_role == 'hunter') {
       return [
+        const ReUseMartApp(),
         const HomeContent(), 
         const HistoryKomisiPage(),
         const ProfilKurir()
         ];
     } else if(_role == 'pembeli') {
       return [
+        const ReUseMartApp(),
         const HomeContent(), 
         const MerchandisePage(), 
         const ProfilKurir()
@@ -125,6 +130,11 @@ class _HomePageState extends State<HomePage> {
           label: 'Home',
         ),
         BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: 'Barang Tersedia',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.history),
           activeIcon: Icon(Icons.history_edu),
           label: 'Riwayat Komisi',
@@ -141,6 +151,11 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.home_outlined),
           activeIcon: Icon(Icons.home),
           label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: 'Barang Tersedia',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),

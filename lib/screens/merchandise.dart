@@ -46,6 +46,59 @@ class _MerchandisePageState extends State<MerchandisePage> {
       });
     }
   }
+Future<void> claimMerchandise(String id, int requiredPoints) async {
+  if (user == null || (user!.points ?? 0) < requiredPoints) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Poin tidak cukup untuk klaim.")),
+    );
+    return;
+  }
+
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Konfirmasi Penukaran"),
+      content: Text("Apakah Anda yakin ingin menukar $requiredPoints poin untuk merchandise ini?"),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text("Batal"),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text("Ya, Klaim"),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmed != true) return;
+  final response = await http.post(
+    Uri.parse('${Api.baseUrl}/claim-merchandise'),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'id_pembeli': user!.id,
+      'id_merchandise': id,
+    }),
+  );
+
+  final resData = jsonDecode(response.body);
+
+  if (response.statusCode == 200 && resData['success'] == true) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Klaim berhasil, silakan ambil di CS!")),
+    );
+    loadUserAndMerchandise();
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(resData['message'] ?? 'Gagal klaim merchandise.')),
+    );
+  }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +130,12 @@ class _MerchandisePageState extends State<MerchandisePage> {
                     ),
 
                     title: Text(item['nama']),
-                    subtitle: Text("Poin: ${item['poin']}"),
+                    subtitle: Text("Poin: ${item['poin']} Stok: ${item['stok']}"),
                     trailing: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        claimMerchandise(item['id_merchandise'].toString(), item['poin']);
+                      },
+
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFE9C8CE),
                         foregroundColor: Colors.black,

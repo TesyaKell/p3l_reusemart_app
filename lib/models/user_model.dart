@@ -42,7 +42,7 @@ class User {
         phone: json['no_telp'] ?? '',
         role: role,
         points: json['poin'] ?? 0,
-        balance: (json['saldo'] ?? 0).toDouble(),
+        //balance: (json['saldo'] ?? 0).toDouble(),
         isTopSeller: false,
         originalData: Map<String, dynamic>.from(json),
       );

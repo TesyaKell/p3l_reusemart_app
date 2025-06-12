@@ -39,8 +39,12 @@ class _LoginPageState extends State<LoginPage> {
 
       if (loginResponse != null) {
         if (!mounted) return;
-        // Navigator.pushReplacementNamed(context, '/home');
-        Navigator.pop(context, true); // <-- kembali ke HomePage dan trigger result
+        // Navigator.pop(context, true); // <-- kembali ke HomePage dan trigger result
+        Navigator.push(context, 
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
       } else {
         setState(() {
           _errorMessage = 'Login gagal. Email atau password salah.';
@@ -181,11 +185,8 @@ class _LoginPageState extends State<LoginPage> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: (){
-                              Navigator.push(context, 
-                                MaterialPageRoute(
-                                  builder: (context) => HomeContent(),
-                                ),
-                              );
+                              Navigator.pop(context);
+                              
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color.fromARGB(255, 224, 182, 203),
