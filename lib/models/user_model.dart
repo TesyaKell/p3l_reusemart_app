@@ -46,7 +46,7 @@ class User {
         isTopSeller: false,
         originalData: Map<String, dynamic>.from(json),
       );
-    } else if (role == 'kurir') {
+    } else if (role == 'kurir' || role == 'hunter') {
       return User(
         id: json['id_pegawai'] ?? '',
         name: json['nama_pegawai'] ?? '',

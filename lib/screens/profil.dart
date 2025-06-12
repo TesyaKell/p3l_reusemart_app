@@ -173,7 +173,7 @@ class ProfilKurir extends StatelessWidget {
     );
   }
 
-  void _confirmLogout(BuildContext context) {
+  void _confirmLogout(BuildContext context) {//perlu mengdelete akses fcm_token di database 
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -201,4 +201,5 @@ class ProfilKurir extends StatelessWidget {
       },
     );
   }
+
 }

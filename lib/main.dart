@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:p3l_reusemart/screens/home_umum.dart';
 
 import 'firebase_options.dart';
 import 'screens/home_page.dart' as home_page;
@@ -78,6 +79,7 @@ class _MyAppState extends State<MyApp> {
       ),
       home: user != null ? const home_page.HomePage() : const HomePage(),
       routes: {
+        // '/umum': (context) => const HomeUmumPage(),
         '/login': (context) => const LoginPage(),
         '/home': (context) => const home_page.HomePage(),
         '/profil_kurir': (context) => const ProfilKurir(),
