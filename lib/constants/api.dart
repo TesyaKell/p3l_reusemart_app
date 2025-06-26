@@ -6,9 +6,8 @@ class Api {
   // //static const String baseUrl = 'http://10.0.2.2:8000/api'; // emulator
 
   static const String baseUrl =
-      'https://b103-2a09-bac5-39e2-1028-00-19c-8.ngrok-free.app/api';
-  static const String nobase =
-      'https://b103-2a09-bac5-39e2-1028-00-19c-8.ngrok-free.app';
+      'https://8210-182-253-183-20.ngrok-free.app/api';
+  static const String nobase = 'https://8210-182-253-183-20.ngrok-free.app';
 
   // Auth endpoints
   static const String login = '$baseUrl/login-mobile';
