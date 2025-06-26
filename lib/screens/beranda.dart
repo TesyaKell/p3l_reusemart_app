@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:p3l_reusemart/constants/api.dart';
 import 'dart:convert';
 import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
@@ -24,7 +25,7 @@ class _ReUseMartAppState extends State<ReUseMartApp>
   Future<PenitipRating?> fetchTopSeller() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.32.254.113:8000/topSeller'),
+        Uri.parse('${Api.baseUrlnon}/topSeller'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

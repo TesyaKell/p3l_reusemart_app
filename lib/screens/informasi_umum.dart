@@ -26,7 +26,7 @@ Future<List<Barang>> fetchBarang() async {
 Future<PenitipRating?> fetchTopSeller() async {
   try {
     final response = await http.get(
-      Uri.parse('http://10.32.254.113:8000/topSeller'),
+      Uri.parse('${Api.baseUrl}/topSeller'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -1159,7 +1159,7 @@ class _TentangKamiPageState extends State<TentangKamiPage>
                     child: SizedBox(
                       width: double.infinity,
                       child: Image.network(
-                        'http://10.32.254.113:8000/storage/${product.fotoProduk[0]}',
+                        '${Api.baseUrl}/storage/${product.fotoProduk[0]}',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:p3l_reusemart/screens/home_page.dart';
 import '../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -38,7 +39,12 @@ class _LoginPageState extends State<LoginPage> {
 
       if (loginResponse != null) {
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, '/home');
+        // Navigator.pop(context, true); // <-- kembali ke HomePage dan trigger result
+        Navigator.push(context, 
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
       } else {
         setState(() {
           _errorMessage = 'Login gagal. Email atau password salah.';
@@ -172,6 +178,28 @@ class _LoginPageState extends State<LoginPage> {
                                     'Login',
                                     style: TextStyle(fontSize: 16),
                                   ),
+                          ),
+                        ),
+                        const SizedBox(height: 10,),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: (){
+                              Navigator.pop(context);
+                              
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color.fromARGB(255, 224, 182, 203),
+                              foregroundColor: Colors.black45,
+                              padding: const EdgeInsets.all(16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Back',
+                              style: TextStyle(fontSize: 16),
+                            ),
                           ),
                         ),
                       ],

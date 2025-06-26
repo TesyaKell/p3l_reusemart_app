@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:p3l_reusemart/constants/api.dart';
 import '../../models/Transaksi.dart';
 import 'detail_transaksi_page.dart';
 import 'package:http/http.dart' as http;
@@ -37,7 +38,7 @@ class _HistoryTransaksiPageState extends State<HistoryTransaksiPage> {
     if (year != null) queryParams['year'] = year.toString();
 
     final uri = Uri.parse(
-      'http://10.32.254.113:8000/riwayat-transaksi',
+      '${Api.baseUrl}/riwayat-transaksi',
     ).replace(queryParameters: queryParams);
 
     final response = await http.get(

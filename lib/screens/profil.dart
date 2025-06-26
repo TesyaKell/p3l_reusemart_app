@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:p3l_reusemart/constants/api.dart';
 import 'package:p3l_reusemart/screens/beranda.dart';
 import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
@@ -6,27 +9,67 @@ import '../services/auth_service.dart';
 import 'login_page.dart';
 import 'package:intl/intl.dart';
 import 'home_page.dart';
+import 'package:http/http.dart' as http;
 
-class ProfilKurir extends StatelessWidget {
+
+
+ class ProfilKurir extends StatefulWidget {
   const ProfilKurir({super.key});
 
   @override
+  State<ProfilKurir> createState() => _ProfilKurirState();
+}
+
+class _ProfilKurirState extends State<ProfilKurir> {
+  User? user;
+  String role = '';
+  String kodeJabatan = '-';
+  String tanggalLahir = '-';
+  String points = '-';
+  double saldo = 0;
+  double totalKomisi = 0;
+  int jumlahKomisi = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  Future<void> loadProfile() async {
+    final u = SharedPrefsUtil.getUser();
+    if (u == null) return;
+
+    final r = u.role ?? '';
+    setState(() {
+      user = u;
+      role = r;
+      kodeJabatan = u.originalData['kode_jabatan'] ?? '-';
+      tanggalLahir = u.originalData['tanggal_lahir'] ?? '-';
+      points = u.points?.toString() ?? '-';
+      saldo = u.balance ?? 0;
+    });
+    print(user!.id);
+    print(role);
+    if (r == 'hunter') {
+      await fetchKomisi(u.originalData['id_pegawai']);
+    }
+  }
+
+  Future<void> fetchKomisi(String id) async {
+    final res = await http.get(Uri.parse('${Api.historyKomisi}/$id'));
+
+    if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      setState(() {
+        totalKomisi = (data['total_komisi'] ?? 0).toDouble();
+        jumlahKomisi = data['komisi']?.length ?? 0;
+        saldo = totalKomisi;
+      });
+    }
+  }
+ @override
   Widget build(BuildContext context) {
-    final user = SharedPrefsUtil.getUser();
-    final role = user?.role ?? '';
-    final kodeJabatan = user?.originalData['kode_jabatan'] ?? '-';
-    final tanggalLahir = user?.originalData['tanggal_lahir'] ?? '-';
-    final points = user?.points?.toString() ?? '-';
-    final saldo = user?.balance ?? 0;
-
-    final formattedSaldo = NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: 'Rp ',
-      decimalDigits: 0,
-    ).format(saldo);
-
-    if (user == null) return const Center(child: CircularProgressIndicator());
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -54,7 +97,7 @@ class ProfilKurir extends StatelessWidget {
                       radius: 45,
                       backgroundColor: const Color.fromARGB(255, 117, 46, 81),
                       child: Text(
-                        user.name[0].toUpperCase(),
+                        user!.name[0].toUpperCase(),
                         style: const TextStyle(
                           fontSize: 40,
                           color: Colors.white,
@@ -64,7 +107,7 @@ class ProfilKurir extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    user.name,
+                    user!.name,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -110,8 +153,8 @@ class ProfilKurir extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildInfoRow(Icons.email, 'Email', user.email),
-                      _buildInfoRow(Icons.phone, 'Telepon', user.phone),
+                      _buildInfoRow(Icons.email, 'Email', user!.email),
+                      _buildInfoRow(Icons.phone, 'Telepon', user!.phone),
                       if (role == 'hunter' || role == 'kurir')
                         _buildInfoRow(
                           Icons.cake,
@@ -120,11 +163,18 @@ class ProfilKurir extends StatelessWidget {
                         ),
                       if (role == 'pembeli' || role == 'penitip')
                         _buildInfoRow(Icons.star, 'Poin', points),
-                      _buildInfoRow(
+                      if(role != 'pembeli' && role != 'kurir')
+                        _buildInfoRow(
                         Icons.account_balance_wallet,
                         'Saldo',
-                        formattedSaldo,
+                        saldo.toString(),
                       ),
+                      if(role == 'hunter')
+                        _buildInfoRow(
+                          Icons.file_open,
+                          'Jumlah Komisi',
+                          jumlahKomisi.toString(),
+                        ),
                     ],
                   ),
                 ),
@@ -160,7 +210,6 @@ class ProfilKurir extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
@@ -173,7 +222,7 @@ class ProfilKurir extends StatelessWidget {
     );
   }
 
-  void _confirmLogout(BuildContext context) {
+  void _confirmLogout(BuildContext context) {//perlu mengdelete akses fcm_token di database 
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -201,4 +250,5 @@ class ProfilKurir extends StatelessWidget {
       },
     );
   }
+
 }
