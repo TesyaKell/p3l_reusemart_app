@@ -190,7 +190,7 @@ class ProfilKurir extends StatelessWidget {
                 Navigator.of(dialogContext).pop();
                 await AuthService.logout();
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const HomePage()),
+                  MaterialPageRoute(builder: (context) => const ReUseMartApp()),
                   (Route<dynamic> route) => false,
                 );
               },

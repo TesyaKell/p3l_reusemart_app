@@ -69,14 +69,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final user = SharedPrefsUtil.getUser();
-    final bool isLoggedIn = user != null;
     return MaterialApp(
       title: 'ReuseMart',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: user != null ? const home_page.HomePage() : const HomePage(),
+      home: user != null ? const home_page.HomePage() : const ReUseMartApp(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const home_page.HomePage(),
