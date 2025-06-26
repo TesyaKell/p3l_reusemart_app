@@ -7,7 +7,9 @@ import '../screens/beranda.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:p3l_reusemart/utils/shared_prefs.dart';
 import '../models/PenitipRating.dart';
+import '../../constants/api.dart';
 
+final String baseUrl = Api.baseUrl;
 Future<List<Barang>> fetchBarang() async {
   try {
     final response = await http.get(Uri.parse(Api.barang));
@@ -26,7 +28,7 @@ Future<List<Barang>> fetchBarang() async {
 Future<PenitipRating?> fetchTopSeller() async {
   try {
     final response = await http.get(
-      Uri.parse('http://10.32.254.113:8000/topSeller'),
+      Uri.parse('${Api.rating}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -1159,7 +1161,7 @@ class _TentangKamiPageState extends State<TentangKamiPage>
                     child: SizedBox(
                       width: double.infinity,
                       child: Image.network(
-                        'http://10.32.254.113:8000/storage/${product.fotoProduk[0]}',
+                        '${baseUrl}/storage/${product.fotoProduk[0]}',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(

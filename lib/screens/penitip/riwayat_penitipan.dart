@@ -5,6 +5,9 @@ import '../../utils/shared_prefs.dart';
 import 'detail_barang.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../constants/api.dart';
+
+final String baseUrl = Api.baseUrl;
 
 class RiwayatTransaksiPage extends StatefulWidget {
   const RiwayatTransaksiPage({Key? key}) : super(key: key);
@@ -16,7 +19,6 @@ class RiwayatTransaksiPage extends StatefulWidget {
 class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
   late Future<List<Barang>> _futureTransaksi;
   bool _isGridView = true;
-  final String baseUrl = 'http://10.32.254.113:8000';
 
   @override
   void initState() {
@@ -27,7 +29,7 @@ class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
   Future<List<Barang>> fetchTransaksi() async {
     final token = await SharedPrefsUtil.getToken();
     final response = await http.get(
-      Uri.parse('http://10.32.254.113:8000/riwayat-penitipan'),
+      Uri.parse('${Api.riwayatPenitipan}'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',

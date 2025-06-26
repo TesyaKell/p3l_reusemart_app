@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 import '../utils/shared_prefs.dart';
 import '../models/PenitipRating.dart';
 import '../screens/informasi_umum.dart';
+import '../../constants/api.dart';
 
 class ReUseMartApp extends StatefulWidget {
   const ReUseMartApp({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _ReUseMartAppState extends State<ReUseMartApp>
   Future<PenitipRating?> fetchTopSeller() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.32.254.113:8000/topSeller'),
+        Uri.parse('${Api.rating}'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

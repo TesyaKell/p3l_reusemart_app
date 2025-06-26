@@ -4,6 +4,7 @@ import 'detail_transaksi_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../utils/shared_prefs.dart';
+import '../../constants/api.dart';
 
 class HistoryTransaksiPage extends StatefulWidget {
   const HistoryTransaksiPage({Key? key}) : super(key: key);
@@ -37,7 +38,7 @@ class _HistoryTransaksiPageState extends State<HistoryTransaksiPage> {
     if (year != null) queryParams['year'] = year.toString();
 
     final uri = Uri.parse(
-      'http://10.32.254.113:8000/riwayat-transaksi',
+      '${Api.riwayatPenitipan}',
     ).replace(queryParameters: queryParams);
 
     final response = await http.get(
