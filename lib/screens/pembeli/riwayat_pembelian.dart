@@ -38,7 +38,7 @@ class _HistoryTransaksiPageState extends State<HistoryTransaksiPage> {
     if (year != null) queryParams['year'] = year.toString();
 
     final uri = Uri.parse(
-      '${Api.riwayatPenitipan}',
+      '${Api.riwayatPembelian}',
     ).replace(queryParameters: queryParams);
 
     final response = await http.get(
@@ -96,7 +96,7 @@ class _HistoryTransaksiPageState extends State<HistoryTransaksiPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Filter Transaksi',
+                      'Filterr Transaksi',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
