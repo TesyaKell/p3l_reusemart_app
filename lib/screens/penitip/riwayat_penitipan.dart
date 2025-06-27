@@ -8,6 +8,7 @@ import 'dart:convert';
 import '../../constants/api.dart';
 
 final String baseUrl = Api.baseUrl;
+final String nobase = Api.nobase;
 
 class RiwayatTransaksiPage extends StatefulWidget {
   const RiwayatTransaksiPage({Key? key}) : super(key: key);
@@ -61,7 +62,7 @@ class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
 
   String getImageUrl(Barang product) {
     if (product.fotoProduk.isNotEmpty) {
-      return '$baseUrl/storage/${product.fotoProduk[0]}';
+      return '$nobase/storage/${product.fotoProduk[0]}';
     }
     return '';
   }
