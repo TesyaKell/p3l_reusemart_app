@@ -83,6 +83,7 @@ class _HistoryTransaksiPageState extends State<HistoryTransaksiPage> {
       body: Column(
         children: [
           // Filter Section
+          const SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.all(12.0),
             child: Card(

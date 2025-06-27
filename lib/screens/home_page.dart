@@ -127,10 +127,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[_selectedIndex]),
-        backgroundColor: const Color(0xFFE9C8CE),
-      ),
+      // appBar: AppBar(
+      //   title: Text(_titles[_selectedIndex]),
+      //   backgroundColor: const Color(0xFFE9C8CE),
+      // ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
