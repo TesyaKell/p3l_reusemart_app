@@ -2,13 +2,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:p3l_reusemart/screens/home_umum.dart';
 
 import 'firebase_options.dart';
-import 'screens/home_page.dart';
+import 'screens/home_page.dart' as home_page;
 import 'screens/login_page.dart';
+import 'screens/informasi_umum.dart';
+import 'screens/beranda.dart';
 import 'screens/profil.dart';
 import 'services/notification_service.dart';
 import 'utils/shared_prefs.dart';
+import '../screens/home_page.dart';
 
 /// Initialize notification channels early
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -55,22 +59,31 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
+    final user = SharedPrefsUtil.getUser();
     return MaterialApp(
       title: 'ReuseMart',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      initialRoute: SharedPrefsUtil.isLoggedIn() ? '/home' : '/login',
+      home: user != null ? const home_page.HomePage() : const ReUseMartApp(),
       routes: {
+        // '/umum': (context) => const HomeUmumPage(),
         '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
-        '/profil_kurir': (context) => const ProfilKurir(), // Added route
+        '/home': (context) => const home_page.HomePage(),
+        '/profil_kurir': (context) => const ProfilKurir(),
+        '/tentang_kami': (context) => const TentangKamiPage(),
+        '/beranda': (context) => const ReUseMartApp(), // pastikan ini bukan MaterialApp
       },
     );
   }
