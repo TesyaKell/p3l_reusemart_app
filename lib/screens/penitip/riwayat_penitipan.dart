@@ -202,7 +202,7 @@ class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                DetailBarangPage(barang: barang, baseUrl: baseUrl),
+                DetailBarangPage(barang: barang, nobase: nobase),
           ),
         );
       },
@@ -334,7 +334,7 @@ class _RiwayatTransaksiPageState extends State<RiwayatTransaksiPage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                DetailBarangPage(barang: barang, baseUrl: baseUrl),
+                DetailBarangPage(barang: barang, nobase: nobase),
           ),
         );
       },

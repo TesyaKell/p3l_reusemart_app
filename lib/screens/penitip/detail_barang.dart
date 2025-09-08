@@ -5,13 +5,10 @@ import '../../models/Barang.dart';
 
 class DetailBarangPage extends StatefulWidget {
   final Barang barang;
-  final String baseUrl;
+  final String nobase;
 
-  const DetailBarangPage({
-    Key? key,
-    required this.barang,
-    required this.baseUrl,
-  }) : super(key: key);
+  const DetailBarangPage({Key? key, required this.barang, required this.nobase})
+    : super(key: key);
 
   @override
   State<DetailBarangPage> createState() => _DetailBarangPageState();
@@ -71,7 +68,7 @@ class _DetailBarangPageState extends State<DetailBarangPage> {
   List<String> getImageUrls() {
     if (widget.barang.fotoProduk.isNotEmpty) {
       return widget.barang.fotoProduk
-          .map((foto) => '${widget.baseUrl}/storage/$foto')
+          .map((foto) => '${widget.nobase}/storage/$foto')
           .toList();
     }
     return [];
